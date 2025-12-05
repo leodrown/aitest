@@ -1,17 +1,26 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ES module için __dirname tanımı
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Middleware
 app.use(express.json());
 app.use(cors());
+app.use(express.static(__dirname)); // static dosyalar (css/js/img vs.)
 
+// Ana sayfa
 app.get("/", (req, res) => {
-    res.send("Sunucu ÇALIŞIYOR kankaaa 🔥");
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // health check (UptimeRobot için)
