@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Kanka AI</title>
+</head>
+<body>
+
+  <h2>Kanka AI - Sohbet</h2>
+
+  <div id="yazilar"></div>
+
+  <input id="mesaj" type="text" placeholder="Mesaj yaz..." style="width:70%;">
+  <button onclick="gonder()">Gönder</button>
+
+  <script>
+    // BURAYA RENDER URL'İN GELECEK
+    const BACKEND_URL = "https://senin-render.onrender.com";
+
+    async function gonder() {
+      const input = document.getElementById("mesaj");
+      const yazilar = document.getElementById("yazilar");
+
+      const metin = input.value.trim();
+      if (!metin) return;
+
+      yazilar.innerHTML += "<p><b>Sen:</b> " + metin + "</p>";
+      input.value = "";
+
+      yazilar.innerHTML += "<p><b>Bot:</b> yazıyor...</p>";
+
+      const res = await fetch(BACKEND_URL + "/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: metin })
+      });
+
+      const data = await res.json();
+
+      yazilar.lastChild.remove(); // "yazıyor..." satırını sil
+      yazilar.innerHTML += "<p><b>Bot:</b> " + (data.reply || data.error) + "</p>";
+    }
+  </script>
+
+</body>
+</html>
