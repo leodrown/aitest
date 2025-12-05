@@ -2,43 +2,46 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Kanka AI</title>
+  <title>Yapay Zeka Chat</title>
 </head>
 <body>
 
-  <h2>Kanka AI - Sohbet</h2>
+  <h2>AI Sohbet Paneli</h2>
 
-  <div id="yazilar"></div>
+  <input id="messageInput" type="text" placeholder="Mesaj yaz kanka..." style="width: 250px; padding: 6px;">
+  <button onclick="sendMessage()" style="padding: 6px 10px;">Gönder</button>
 
-  <input id="mesaj" type="text" placeholder="Mesaj yaz..." style="width:70%;">
-  <button onclick="gonder()">Gönder</button>
+  <p id="response"></p>
 
   <script>
-    // BURAYA RENDER URL'İN GELECEK
-    const BACKEND_URL = "https://senin-render.onrender.com";
+    async function sendMessage() {
+      const msg = document.getElementById("messageInput").value;
 
-    async function gonder() {
-      const input = document.getElementById("mesaj");
-      const yazilar = document.getElementById("yazilar");
+      if (!msg) {
+        document.getElementById("response").innerText = "Kanka önce bir şey yaz 😅";
+        return;
+      }
 
-      const metin = input.value.trim();
-      if (!metin) return;
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message: msg })
+        });
 
-      yazilar.innerHTML += "<p><b>Sen:</b> " + metin + "</p>";
-      input.value = "";
+        const data = await res.json();
 
-      yazilar.innerHTML += "<p><b>Bot:</b> yazıyor...</p>";
+        if (data.reply) {
+          document.getElementById("response").innerText = "AI: " + data.reply;
+        } else {
+          document.getElementById("response").innerText = "Cevap gelmedi kankam 💀";
+        }
 
-      const res = await fetch(BACKEND_URL + "/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: metin })
-      });
-
-      const data = await res.json();
-
-      yazilar.lastChild.remove(); // "yazıyor..." satırını sil
-      yazilar.innerHTML += "<p><b>Bot:</b> " + (data.reply || data.error) + "</p>";
+      } catch (e) {
+        document.getElementById("response").innerText = "Sunucu hata verdi reis ❌";
+      }
     }
   </script>
 
