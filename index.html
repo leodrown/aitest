@@ -2,48 +2,77 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <title>Yapay Zeka Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern AI Chat</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-  <h2>AI Sohbet Paneli</h2>
+  <div class="app-container">
 
-  <input id="messageInput" type="text" placeholder="Mesaj yaz kanka..." style="width: 250px; padding: 6px;">
-  <button onclick="sendMessage()" style="padding: 6px 10px;">Gönder</button>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">AI</div>
+      <nav class="menu">
+        <button class="menu-btn google"><i class="fab fa-google"></i></button>
+        <button class="menu-btn cloudflare"><i class="fas fa-cloud"></i></button>
+        <button class="menu-btn settings"><i class="fas fa-cog"></i></button>
+      </nav>
+    </aside>
 
-  <p id="response"></p>
+    <!-- Main Chat Area -->
+    <main class="chat-area">
+
+      <!-- Top bar -->
+      <header class="top-bar">
+        <div class="avatar">👤</div>
+      </header>
+
+      <!-- Chat messages -->
+      <div id="chatBox" class="chat-box">
+        <!-- Mesajlar JS ile eklenecek -->
+      </div>
+
+      <!-- Input alanı -->
+      <div class="input-container">
+        <input id="messageInput" type="text" placeholder="Mesajını yaz..." />
+        <button id="sendBtn">Gönder</button>
+      </div>
+
+    </main>
+
+  </div>
 
   <script>
-    async function sendMessage() {
-      const msg = document.getElementById("messageInput").value;
+    const chatBox = document.getElementById("chatBox");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
 
-      if (!msg) {
-        document.getElementById("response").innerText = "Kanka önce bir şey yaz 😅";
-        return;
-      }
-
-      try {
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message: msg })
-        });
-
-        const data = await res.json();
-
-        if (data.reply) {
-          document.getElementById("response").innerText = "AI: " + data.reply;
-        } else {
-          document.getElementById("response").innerText = "Cevap gelmedi kankam 💀";
-        }
-
-      } catch (e) {
-        document.getElementById("response").innerText = "Sunucu hata verdi reis ❌";
-      }
+    function appendMessage(text, type) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "chat-message " + type;
+      msgDiv.innerText = text;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
+
+    sendBtn.addEventListener("click", () => {
+      const msg = messageInput.value.trim();
+      if(!msg) return;
+
+      appendMessage(msg, "user");
+      messageInput.value = "";
+
+      // Örnek AI cevabı
+      setTimeout(() => {
+        appendMessage("AI cevabı buraya gelecek.", "ai");
+      }, 700);
+    });
+
+    messageInput.addEventListener("keypress", (e) => {
+      if(e.key === "Enter") sendBtn.click();
+    });
   </script>
 
 </body>
