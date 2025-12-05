@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (req, res) => {
+    res.send("Sunucu ÇALIŞIYOR kankaaa 🔥");
+});
+
 // health check (UptimeRobot için)
 app.get("/health", (req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
